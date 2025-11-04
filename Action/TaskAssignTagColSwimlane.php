@@ -1,17 +1,21 @@
 <?php
+// Copyright (c) 2025 The Khronos Group Inc.
+// Copyright (c) 2016 Frédéric Guillot
+//
+// SPDX-License-Identifier: MIT
 
-namespace Kanboard\Plugin\AutomaticAction\Action;
+namespace Kanboard\Plugin\TagAutomaticAction\Action;
 
 use Kanboard\Model\TaskModel;
 use Kanboard\Action\Base;
 
 /**
- * Rename Task Title
+ * Assign tag on movement
  *
  * @package action
- * @author  Frederic Guillot
+ * @author  Rylie Pavlik
  */
-class TaskRename extends Base
+class TaskAssignTagColSwimlane extends Base
 {
     /**
      * Get automatic action description
@@ -21,7 +25,7 @@ class TaskRename extends Base
      */
     public function getDescription()
     {
-        return t('Change the task title when the task is moved to another column');
+        return t('Assign a tag when the task is moved to another column and swimlane');
     }
 
     /**
@@ -46,7 +50,9 @@ class TaskRename extends Base
     public function getActionRequiredParameters()
     {
         return array(
-            'title' => t('Title'),
+            'column_id' => t('Column'),
+            'swimlane_id' => t('Swimlane'),
+            'tag' => t('Tag'),
         );
     }
 
@@ -60,6 +66,11 @@ class TaskRename extends Base
     {
         return array(
             'task_id',
+            'task' => array(
+                'project_id',
+                'column_id',
+                'swimlane_id',
+            ),
         );
     }
 
@@ -72,7 +83,13 @@ class TaskRename extends Base
      */
     public function doAction(array $data)
     {
-        return $this->taskModificationModel->update(array('id' => $data['task_id'], 'title' => $this->getParam('title')));
+        $values = array(
+            'id' => $data['task_id'],
+            'project_id' => $data['task']['project_id'],
+            'tags_only_add_new' => 1,
+            'tags' => array($this->getParam('tag'),)
+        );
+        return $this->taskModificationModel->update($values);
     }
 
     /**
@@ -84,6 +101,7 @@ class TaskRename extends Base
      */
     public function hasRequiredCondition(array $data)
     {
-        return true;
+        return $data['task']['column_id'] == $this->getParam('column_id') &&
+            $data['task']['swimlane_id'] == $this->getParam('swimlane_id');
     }
 }
