@@ -37,6 +37,7 @@ class TaskAssignTagColSwimlane extends Base
     public function getCompatibleEvents()
     {
         return array(
+            TaskModel::EVENT_CREATE,
             TaskModel::EVENT_MOVE_COLUMN,
         );
     }
