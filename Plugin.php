@@ -7,6 +7,7 @@
 namespace Kanboard\Plugin\TagAutomaticAction;
 
 use Kanboard\Core\Plugin\Base;
+use Kanboard\Plugin\TagAutomaticAction\Action\TaskAssignTagCol;
 use Kanboard\Plugin\TagAutomaticAction\Action\TaskAssignTagColSwimlane;
 
 class Plugin extends Base
@@ -15,6 +16,7 @@ class Plugin extends Base
     {
 
         $this->actionManager->register(new TaskAssignTagColSwimlane($this->container));
+        $this->actionManager->register(new TaskAssignTagCol($this->container));
     }
 
     public function getPluginName()
