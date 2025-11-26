@@ -37,8 +37,7 @@ class TaskAssignTagColSwimlane extends Base
     public function getCompatibleEvents()
     {
         return array(
-            // doesn't work with create, triggers sql error
-            // TaskModel::EVENT_CREATE,
+            TaskModel::EVENT_CREATE,
             TaskModel::EVENT_MOVE_COLUMN,
         );
     }
