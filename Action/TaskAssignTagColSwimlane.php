@@ -37,7 +37,8 @@ class TaskAssignTagColSwimlane extends Base
     public function getCompatibleEvents()
     {
         return array(
-            TaskModel::EVENT_CREATE,
+            // doesn't work with create, triggers sql error
+            // TaskModel::EVENT_CREATE,
             TaskModel::EVENT_MOVE_COLUMN,
         );
     }
@@ -84,13 +85,12 @@ class TaskAssignTagColSwimlane extends Base
      */
     public function doAction(array $data)
     {
-        $values = array(
-            'id' => $data['task_id'],
-            'project_id' => $data['task']['project_id'],
-            'tags_only_add_new' => 1,
-            'tags' => array($this->getParam('tag'),)
+        return $this->taskTagModel->save(
+            $data['task']['project_id'],
+            $data['task_id'],
+            array($this->getParam('tag'),),
+            false
         );
-        return $this->taskModificationModel->update($values);
     }
 
     /**
